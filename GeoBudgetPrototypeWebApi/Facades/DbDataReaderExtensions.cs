@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace GeoPrototypeWebApi
+namespace GeoBudgetPrototypeWebApi
 {
     public static class DbDataReaderExtensions
     {
