@@ -10,5 +10,8 @@ namespace GeoBudgetPrototypeWebApi
 
         public static T GetNullable<T>(this DbDataReader reader, string name) =>
             reader[name] == DBNull.Value ? default(T) : (T)reader[name];
+
+        public static T GetNullable<T>(this DbDataReader reader, int index) =>
+            reader[index] == DBNull.Value ? default(T) : (T)reader[index];
     }
 }

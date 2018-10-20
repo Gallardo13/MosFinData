@@ -137,7 +137,7 @@ namespace GeoBudgetPrototypeWebApi.Facades
 
                 while (dataReader.Read())
                 {
-                    return (decimal)dataReader[0];
+                    return dataReader.GetNullable<decimal>(0);
                 }
 
             }
@@ -157,7 +157,7 @@ namespace GeoBudgetPrototypeWebApi.Facades
 
                 while (dataReader.Read())
                 {
-                    return (decimal)dataReader[0];
+                    return dataReader.GetNullable<decimal>(0);
                 }
 
             }
