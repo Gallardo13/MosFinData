@@ -126,5 +126,43 @@ namespace GeoBudgetPrototypeWebApi.Facades
 
             return retVal;
         }
+
+        public decimal GetSumOfAllContracts() 
+        {
+            using (var connection = GetDbConnection())
+            {
+                var command = connection.CreateCommand();
+                command.CommandText = SqlStrings.GetSumOfContracts;
+                var dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    return (decimal)dataReader[0];
+                }
+
+            }
+
+            return 0;
+        }
+
+        public decimal GetSumOfContractsByOkato(long okato) 
+        {
+            using (var connection = GetDbConnection())
+            {
+                var command = connection.CreateCommand();
+                command.CommandText = SqlStrings.GetSumOfContractsByOkato;
+                command.AddParameter("@okato", okato + "%");
+
+                var dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    return (decimal)dataReader[0];
+                }
+
+            }
+
+            return 0;
+        }
     }
 }

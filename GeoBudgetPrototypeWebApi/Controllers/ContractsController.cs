@@ -26,5 +26,20 @@ namespace GeoBudgetPrototypeWebApi.Controllers
             var facade = new ContractFacade();
             return facade.GetContractsByOKATO(okato);
         }
+
+        [Route("getsum")]
+        public decimal GetSum() 
+        {
+            var facade = new ContractFacade();
+            return facade.GetSumOfAllContracts();
+        }
+
+        [Route("getsum/{okato}")]
+        public decimal GetSumByOkato(long okato) 
+        {
+            var facade = new ContractFacade();
+            return facade.GetSumOfContractsByOkato(okato);
+        }
+
     }
 }
