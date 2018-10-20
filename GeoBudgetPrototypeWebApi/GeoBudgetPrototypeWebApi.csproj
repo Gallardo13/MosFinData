@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
+    <Folder Include="Facades\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="MySql.Data" Version="8.0.12" />
+    <PackageReference Include="NLog" Version="4.5.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Facades\MunicipalityFacade.cs" />
+    <Compile Remove="Facades\RegionFacade.cs" />
+    <Compile Remove="Facades\InnFacade.cs" />
+  </ItemGroup>
+</Project>
