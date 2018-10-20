@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/GetAllContractsFromClearSpending/.vs/GetAllContractsFromClearSpending/v15
+/GetAllContractsFromClearSpending/ClearSpendingData/bin/Debug/netcoreapp2.1
+/GetAllContractsFromClearSpending/ClearSpendingData/obj
+/GetAllContractsFromClearSpending/GetAllContractsFromClearSpending/bin/Debug/netcoreapp2.1
+/GetAllContractsFromClearSpending/GetAllContractsFromClearSpending/obj/Debug/netcoreapp2.1
+/GetAllContractsFromClearSpending/GetAllContractsFromClearSpending/obj
