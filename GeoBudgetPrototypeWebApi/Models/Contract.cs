@@ -45,11 +45,6 @@ namespace GeoBudgetPrototypeWebApi.Models
         /// </summary>
         public string Number { get; set; }
 
-        /// <summary>
-        /// Окато
-        /// </summary>
-        public string OKATO { get; set; }
-
         public List<string> OKPDs { get; set; }
 
     }

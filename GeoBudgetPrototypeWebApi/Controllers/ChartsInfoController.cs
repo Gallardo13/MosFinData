@@ -15,15 +15,28 @@ namespace GeoBudgetPrototypeWebApi.Controllers
         [HttpGet]
         public decimal Get()
         {
-            var facade = new ContractFacade();
+            var facade = new ChartFacade();
             return facade.GetSumOfAllContracts();
         }
 
-        [HttpGet("{okato}")]
-        public decimal Get(long okato)
+        [HttpGet("{okato}/{year}")]
+        public decimal Get(long okato, int year)
         {
-            var facade = new ContractFacade();
-            return facade.GetSumOfContractsByOkato(okato);
+            var facade = new ChartFacade();
+
+            if (okato != 0 && year == 0) 
+            {
+                return facade.GetSumOfContractsByOkato(okato);
+            }
+            else if (okato == 0 && year != 0) 
+            {
+                return facade.GetSumOfAllContractsByYear(year);
+            }
+            else 
+            {
+                return facade.GetSumOfContractsByOkatoAndYear(okato, year);
+            }
+
         }
     }
 }

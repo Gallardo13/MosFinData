@@ -22,7 +22,14 @@ namespace GeoBudgetPrototypeWebApi.Controllers
         public IEnumerable<Contract> Get(long okato)
         {
             var facade = new ContractFacade();
-            return facade.GetContractsByOKATO(okato);
+            return facade.GetContractsByOkato(okato);
+        }
+
+        [HttpGet("{okato}/{year}")]
+        public IEnumerable<Contract> Get(long okato, int year)
+        {
+            var facade = new ContractFacade();
+            return facade.GetContractsByOkatoAndYear(okato, year);
         }
     }
 }

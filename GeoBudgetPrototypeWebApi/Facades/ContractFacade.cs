@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Common;
 
 namespace GeoBudgetPrototypeWebApi.Facades
 {
@@ -12,12 +13,46 @@ namespace GeoBudgetPrototypeWebApi.Facades
         /// </summary>
         public IEnumerable<Contract> GetContracts() 
         {
+            return GetContractsWithParams(SqlStrings.GetContracts, new List<Param>());
+        }
+
+        /// <summary>
+        /// Загрузить все контракты с соответствующим ОКАТО
+        /// </summary>
+        public IEnumerable<Contract> GetContractsByOkato(long okato) 
+        {
+            var parameters = new List<Param>() { new Param() { ParamName = "@okato", ParamValue = okato + "%" } };
+
+            return GetContractsWithParams(SqlStrings.GetContractsByOkato, parameters);
+        }
+
+        /// <summary>
+        /// Загрузить все контракты с соответствующим окато за переданный год
+        /// </summary>
+        public IEnumerable<Contract> GetContractsByOkatoAndYear(long okato, int year)
+        {
+            var parameters = new List<Param>() {
+                new Param() { ParamName = "@okato", ParamValue = okato + "%" },
+                new Param() { ParamName = "@dateFrom", ParamValue = new DateTime(year, 1, 1) },
+                new Param() { ParamName = "@dateTo", ParamValue = new DateTime(year, 12, 31) }
+            };
+
+            return GetContractsWithParams(SqlStrings.GetContractsByOkatoAndPeriod, parameters);
+        }
+
+        public List<Contract> GetContractsWithParams(string commandText, List<Param> parameters, bool loadOkpds = true) 
+        {
             var retVal = new List<Contract>();
 
             using (var connection = GetDbConnection())
             {
                 var command = connection.CreateCommand();
-                command.CommandText = SqlStrings.GetContracts;
+                command.CommandText = commandText;
+
+                foreach (var param in parameters) 
+                {
+                    command.AddParameter(param.ParamName, param.ParamValue);
+                }
 
                 var dataReader = command.ExecuteReader();
 
@@ -32,8 +67,7 @@ namespace GeoBudgetPrototypeWebApi.Facades
                         DateFinish = dataReader.GetNullable<DateTime>("date_finish"),
                         Status = dataReader.GetNullableString("status"),
                         Url = dataReader.GetNullableString("url"),
-                        Number = dataReader.GetNullableString("contract"),
-                        OKPDs = new List<string>()
+                        Number = dataReader.GetNullableString("contract")
                     };
 
                     retVal.Add(contract);
@@ -41,128 +75,37 @@ namespace GeoBudgetPrototypeWebApi.Facades
 
                 dataReader.Close();
 
-                foreach (var contract in retVal) 
+                if (loadOkpds)
                 {
-                    var okpdCommand = connection.CreateCommand();
-                    okpdCommand.CommandText = SqlStrings.GetOKPDsByContractId;
-                    okpdCommand.AddParameter("@contractid", contract.Id);
-
-                    var okpdDataReader = okpdCommand.ExecuteReader();
-
-                    while (okpdDataReader.Read())
+                    foreach (var contract in retVal)
                     {
-                        contract.OKPDs.Add(okpdDataReader.GetNullable<string>("description"));
+                        contract.OKPDs = GetOkpdsByContractId(connection, contract.Id);
                     }
-
-                    okpdDataReader.Close();
                 }
             }
 
             return retVal;
-        }
 
-        /// <summary>
-        /// Загрузить все контракты с соответствующим ОКАТО
-        /// </summary>
-        public IEnumerable<Contract> GetContractsByOKATO(long okato) 
+        } 
+
+        public List<string> GetOkpdsByContractId(DbConnection connection, int contractId)
         {
-            var retVal = new List<Contract>();
+            var retVal = new List<string>();
 
-            using (var connection = GetDbConnection()) 
+            var okpdCommand = connection.CreateCommand();
+            okpdCommand.CommandText = SqlStrings.GetOKPDsByContractId;
+            okpdCommand.AddParameter("@contractid", contractId);
+
+            var okpdDataReader = okpdCommand.ExecuteReader();
+
+            while (okpdDataReader.Read())
             {
-                var command = connection.CreateCommand();
-                command.CommandText = SqlStrings.GetContractsByOkato;
-
-                command.AddParameter("@okato", okato + "%");
-
-                var dataReader = command.ExecuteReader();
-
-                while (dataReader.Read())
-                {
-                    var contract = new Contract()
-                    {
-                        Id = dataReader.GetNullable<int>("id"),
-                        Price = dataReader.GetNullable<decimal>("price"),
-                        DateStart = dataReader.GetNullable<DateTime>("date_start"),
-                        DateFinish = dataReader.GetNullable<DateTime>("date_finish"),
-                        Status = dataReader.GetNullableString("status"),
-                        Url = dataReader.GetNullableString("url"),
-                        OKPDs = new List<string>()
-                    };
-
-                    retVal.Add(contract);
-                }
-
-                dataReader.Close();
-
-                foreach (var contract in retVal)
-                {
-                    var okpdCommand = connection.CreateCommand();
-                    okpdCommand.CommandText = SqlStrings.GetOKPDsByContractId;
-                    okpdCommand.AddParameter("@contractid", contract.Id);
-
-                    var okpdDataReader = okpdCommand.ExecuteReader();
-
-                    while (okpdDataReader.Read())
-                    {
-                        contract.OKPDs.Add((string)okpdDataReader["description"]);
-                    }
-
-                    okpdDataReader.Close();
-                }
+                retVal.Add(okpdDataReader.GetNullableString("description"));
             }
+
+            okpdDataReader.Close();
 
             return retVal;
-        }
-
-        public IEnumerable<Contract> GetContractsByYearAndOKATO(int year, long okato)
-        {
-            var retVal = new List<Contract>();
-
-            using (var connection = GetDbConnection()) 
-            {
-
-            }
-
-            return retVal;
-        }
-
-        public decimal GetSumOfAllContracts() 
-        {
-            using (var connection = GetDbConnection())
-            {
-                var command = connection.CreateCommand();
-                command.CommandText = SqlStrings.GetSumOfContracts;
-                var dataReader = command.ExecuteReader();
-
-                while (dataReader.Read())
-                {
-                    return dataReader.GetNullable<decimal>(0);
-                }
-
-            }
-
-            return 0;
-        }
-
-        public decimal GetSumOfContractsByOkato(long okato) 
-        {
-            using (var connection = GetDbConnection())
-            {
-                var command = connection.CreateCommand();
-                command.CommandText = SqlStrings.GetSumOfContractsByOkato;
-                command.AddParameter("@okato", okato + "%");
-
-                var dataReader = command.ExecuteReader();
-
-                while (dataReader.Read())
-                {
-                    return dataReader.GetNullable<decimal>(0);
-                }
-
-            }
-
-            return 0;
         }
     }
 }
