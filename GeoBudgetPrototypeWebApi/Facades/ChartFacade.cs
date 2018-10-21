@@ -29,6 +29,17 @@ namespace GeoBudgetPrototypeWebApi.Facades
             return GetSumOfContractsWithParams(SqlStrings.GetSumOfContractsByPeriod, parameters);
         }
 
+        public decimal GetSumOfContractsByYearAndOkpd(int year, string okpd) 
+        {
+            var parameters = new List<Param>() {
+                new Param() { ParamName = "@dateFrom", ParamValue = new DateTime(year, 1, 1) },
+                new Param() { ParamName = "@dateTo", ParamValue = new DateTime(year, 12, 31) },
+                new Param() { ParamName = "@code", ParamValue = okpd + ".%" },
+            };
+
+            return GetSumOfContractsWithParams(SqlStrings.GetSumOfContractsByPeriodAndOkpd, parameters);
+        }
+
         /// <summary>
         /// Загрузить сумму всех контрактов по окато
         /// </summary>
@@ -52,6 +63,20 @@ namespace GeoBudgetPrototypeWebApi.Facades
 
             return GetSumOfContractsWithParams(SqlStrings.GetSumOfContractsByOkatoAndPeriod, parameters);
         }
+
+        public decimal GetSumOfContractsByOkatoAndYearAndOkpd(long okato, int year, string okpd)
+        {
+            var parameters = new List<Param>() {
+                new Param() { ParamName = "@okato", ParamValue = okato + "%" },
+                new Param() { ParamName = "@dateFrom", ParamValue = new DateTime(year, 1, 1) },
+                new Param() { ParamName = "@dateTo", ParamValue = new DateTime(year, 12, 31) },
+                new Param() { ParamName = "@code", ParamValue = okpd + ".%" }
+            };
+
+            return GetSumOfContractsWithParams(SqlStrings.GetSumOfContractsByOkatoAndPeriodAndOkpd, parameters);
+        }
+
+
 
         public decimal GetSumOfContractsWithParams(string commandText, List<Param> parameters) 
         {

@@ -38,5 +38,20 @@ namespace GeoBudgetPrototypeWebApi.Controllers
             }
 
         }
+
+        [HttpGet("{okato}/{year}/{okpd}")]
+        public decimal Get(long okato, int year, string okpd)
+        {
+            var facade = new ChartFacade();
+
+            if (okato != 0)
+            {
+                return facade.GetSumOfContractsByOkatoAndYearAndOkpd(okato, year, okpd);
+            }
+            else
+            {
+                return facade.GetSumOfContractsByYearAndOkpd(year, okpd);
+            }
+        }
     }
 }

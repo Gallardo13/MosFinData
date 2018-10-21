@@ -40,6 +40,21 @@ namespace GeoBudgetPrototypeWebApi.Facades
             return GetContractsWithParams(SqlStrings.GetContractsByOkatoAndPeriod, parameters);
         }
 
+        /// <summary>
+        /// Загрузить все контракты с соответствующим окато за переданный год и с указанным окпд
+        /// </summary>
+        public IEnumerable<Contract> GetContractsByOkatoAndYearAndOkpd(long okato, int year, string okpd)
+        {
+            var parameters = new List<Param>() {
+                new Param() { ParamName = "@okato", ParamValue = okato + "%" },
+                new Param() { ParamName = "@dateFrom", ParamValue = new DateTime(year, 1, 1) },
+                new Param() { ParamName = "@dateTo", ParamValue = new DateTime(year, 12, 31) },
+                new Param() { ParamName = "@code", ParamValue = okpd + ".%" },
+            };
+
+            return GetContractsWithParams(SqlStrings.GetContractsByOkatoAndPeriodAndOkpd, parameters);
+        }
+
         public List<Contract> GetContractsWithParams(string commandText, List<Param> parameters) 
         {
             var retVal = new List<Contract>();
