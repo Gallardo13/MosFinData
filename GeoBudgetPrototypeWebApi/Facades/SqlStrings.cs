@@ -16,6 +16,8 @@ namespace GeoBudgetPrototypeWebApi.Facades
 
         string GetSumOfContractsByOkatoAndPeriod { get; }
 
+        string GetPopulationByYear { get; }
+
     }
 
     public class SqlStrings : ISqlStrings
@@ -67,7 +69,22 @@ where customers.ocato like @okato and (contracts.date_start between @dateFrom an
         public string GetSumOfContractsByOkato => "select SUM(price) from contracts left join customers on contracts.inn = customers.inn where customers.ocato like @okato";
 
         public string GetSumOfContractsByOkatoAndPeriod => "select SUM(price) from contracts left join customers on contracts.inn = customers.inn where customers.ocato like @okato and (contracts.date_start between @dateFrom and @dateTo)";
-    
-        
+
+        public string GetPopulationByYear => @"select
+ t3.municipality,
+ t3.count,
+ t2.ocato,
+ sum(t1.price) contractsSum
+from
+ contracts t1
+ left join customers t2 on t2.inn = t1.inn
+ left join population t3 on t3.ocato = t2.ocato
+where
+ (t1.date_start between @dateFrom and @dateTo)
+ and t3.year = @year
+group by
+ t3.municipality,
+ t3.count,
+ t2.ocato";
     }
 }
