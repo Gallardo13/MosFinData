@@ -40,7 +40,7 @@ namespace GeoBudgetPrototypeWebApi.Facades
             return GetContractsWithParams(SqlStrings.GetContractsByOkatoAndPeriod, parameters);
         }
 
-        public List<Contract> GetContractsWithParams(string commandText, List<Param> parameters, bool loadOkpds = true) 
+        public List<Contract> GetContractsWithParams(string commandText, List<Param> parameters) 
         {
             var retVal = new List<Contract>();
 
@@ -60,52 +60,21 @@ namespace GeoBudgetPrototypeWebApi.Facades
                 {
                     var contract = new Contract()
                     {
-                        Id = dataReader.GetNullable<int>("id"),
                         Price = dataReader.GetNullable<decimal>("price"),
-                        INN = dataReader.GetNullableString("inn"),
                         DateStart = dataReader.GetNullable<DateTime>("date_start"),
                         DateFinish = dataReader.GetNullable<DateTime>("date_finish"),
                         Status = dataReader.GetNullableString("status"),
                         Url = dataReader.GetNullableString("url"),
-                        Number = dataReader.GetNullableString("contract")
+                        OKPDs = dataReader.GetNullableString("okpdtext")
                     };
 
                     retVal.Add(contract);
                 }
 
                 dataReader.Close();
-
-                if (loadOkpds)
-                {
-                    foreach (var contract in retVal)
-                    {
-                        contract.OKPDs = GetOkpdsByContractId(connection, contract.Id);
-                    }
-                }
             }
 
             return retVal;
-
         } 
-
-        public List<string> GetOkpdsByContractId(DbConnection connection, int contractId)
-        {
-            var retVal = new List<string>();
-
-            var okpdCommand = connection.CreateCommand();
-            okpdCommand.CommandText = SqlStrings.GetOKPDsByContractId;
-            okpdCommand.AddParameter("@contractid", contractId);
-
-            var okpdDataReader = okpdCommand.ExecuteReader();
-
-            while (okpdDataReader.Read())
-            {
-                retVal.Add(okpdDataReader.GetNullableString("description"));
-            }
-
-            okpdDataReader.Close();
-
-            return retVal;
-        }
     }
 }
