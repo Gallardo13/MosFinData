@@ -49,3 +49,4 @@ Thumbs.db
 
 # dotCover
 *.dotCover
+/GetAllContractsFromClearSpending/rawdata
