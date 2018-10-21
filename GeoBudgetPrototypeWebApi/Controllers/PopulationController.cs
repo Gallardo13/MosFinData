@@ -18,5 +18,12 @@ namespace GeoBudgetPrototypeWebApi.Controllers
             var facade = new PopulationFacade();
             return facade.GetKoefficientsByYear(year);
         }
+
+        [HttpGet("{year}/{okpd}")]
+        public IEnumerable<AccomplishmentKoefficient> Get(int year, string okpd)
+        {
+            var facade = new PopulationFacade();
+            return facade.GetKoefficientsByYearAndOkpd(year, okpd);
+        }
     }
 }
